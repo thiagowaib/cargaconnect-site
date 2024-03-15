@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CargaConnect - Mapa</title>
+  <style>
+    body {
+        width: 100vw;
+        height: 100vh;
+        background-color: #282828;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #map {
+      height: 90vh;
+      width: 90vw;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet"></script>
+  <script src="./lib/socket.io/socket.io.js"></script>
+  <script src="./index.js" defer></script>
+</head>
+<body>
+  <div id="map"></div>
+</body>
+</html>
