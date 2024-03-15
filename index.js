@@ -36,7 +36,18 @@ const map = L.map('map').setView([-22.220341, -49.9482], 10); // Latitude e long
     socket.on('connect', () => {
         console.log('SocketIo Conectado');
     });
-    
+
+    // * MÉTODO 1 - Botão Atualizar
+    document.getElementById("atualizar").addEventListener("click", () => {
+      fetchAndAddMarkers();
+    })
+
+    // * MÉTODO 2 - Atualizacao por Intervalo
+    // setInterval(() => {
+    //   fetchAndAddMarkers();
+    // }, 10000);
+
+    // * MÉTODO 3 - WebSocket
     socket.on('novaLocalizacao', (local) => {
         fetchAndAddMarkers();
     });
