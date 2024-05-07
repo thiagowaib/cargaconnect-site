@@ -1,0 +1,119 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: #0d0a11;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: row;
+    outline: none;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    color: whitesmoke;
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+}
+
+#map {
+  height: 95vh;
+  width: 60vw;
+  border-radius: 5px;
+}
+#btnContainer {
+  height: 95vh;
+  width: 40vw;
+  padding: 36px;
+  box-sizing: border-box;
+}
+
+#btnContainer h1 {
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+    padding: 0 0 8px 0;
+    font-style: italic;
+}
+
+#btnContainer h2 {
+    font-weight: 400;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+#btnContainer .container-cmb, #btnContainer .container-input {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 4px 2px 4px 2px;
+    align-items: flex-start;
+    margin: 12px 0;
+}
+
+#btnContainer .container-cmb label, #btnContainer .container-input label {
+    width: fit-content;
+    text-align: center;
+    text-wrap: nowrap;
+    padding-right: 4px;
+}
+
+#btnContainer .container-cmb select, #btnContainer .container-input input {
+    width: 100%;
+    color: #282828;
+    border-radius: 5px;
+}
+
+#btnContainer .container-input label span {
+    font-size: .7em;
+}
+
+#btnContainer fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#btnContainer fieldset button {
+    color: #0d0a11;
+    background-color: whitesmoke;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 2px solid whitesmoke;
+    transition: all .2s;
+    height: 50px;
+}
+
+#btnContainer fieldset button:hover {
+    background-color: #f5f5f5C0;
+    cursor: pointer;
+}
+
+#btnContainer fieldset button:active {
+    background-color: #f5f5f5A0;
+}
+
+#btnContainer fieldset button:disabled {
+    opacity: .9;
+    background-color: rgb(77, 33, 33);
+    color: rgba(245, 245, 245, 0.53);
+    cursor: not-allowed;
+}
+
+#btnContainer fieldset button:disabled::after {
+    content: "(verifique os filtros)";
+    display: block;
+    color: whitesmoke;
+    font-size: .7em;
+    font-weight: 300;
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+}
