@@ -3,6 +3,7 @@ const inpLimiteHistorico   = document.getElementById("inpLimiteHistorico");
 const btnConsultaHistorico = document.getElementById("btnHistorico");
 const btnLimpar            = document.getElementById("btnLimpar");
 const cmbAparelhos         = document.getElementById("cmbAparelhos");
+const spanStatus           = document.getElementById("statusSpan");
 let   routingControl       = null;
 
 /**
@@ -29,6 +30,8 @@ async function fetchAndAddMarkers() {
         map.addLayer(marker);
         marker.bindPopup("<b>"+local.APARELHO_DESCRICAO+"</b>");
       });
+
+      spanStatus.innerHTML="Modo da Consulta: <b>Geral</b>";
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -90,6 +93,8 @@ async function fetchAparelhos() {
         }
       }
     }).addTo(map);
+
+    spanStatus.innerHTML="Modo da Consulta: <b>Histórico</b>";
 
   } catch (error) {
     console.error('Error fetching data:', error);

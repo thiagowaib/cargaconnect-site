@@ -124,8 +124,8 @@ h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
 
 #container-filtros .container-botoes button:disabled {
     opacity: .9;
-    background-color: rgb(77, 33, 33);
-    color: rgba(245, 245, 245, 0.53);
+    background-color: rgb(95, 82, 82);
+    color: rgba(255, 255, 255, 0.711);
     cursor: not-allowed;
 }
 
@@ -138,4 +138,9 @@ h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
     font-style: italic;
     text-align: center;
     width: 100%;
+}
+
+#container-filtros #statusSpan {
+    position: absolute;
+    bottom: calc(2.5vh - 5px);
 }
