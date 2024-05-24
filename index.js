@@ -181,3 +181,37 @@ socket.on('connect', () => {
 socket.on('novaLocalizacao', (local) => {
     fetchAndAddMarkers();
 });
+
+
+// Define a URL do endpoint GraphQL
+const graphqlEndpoint = 'http://localhost:4000/graphql'; // Substitua pelo seu endpoint GraphQL
+// Define a query GraphQL
+const query = `
+  query {
+    consultarDistancias(APARELHO_ID: "16b265f3-4c94-4a04-aad5-fff65707f958", DATA: "2024-05-23") {
+      ID
+      DISTANCIA
+      APARELHO_ID
+      DATA
+    }
+  }
+`;
+
+// Define as opções da requisição
+const options = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ query }),
+};
+
+// Realiza a requisição GraphQL
+fetch(graphqlEndpoint, options)
+  .then(response => response.json())
+  .then(data => {
+    console.log('Resposta da API GraphQL:', data);
+  })
+  .catch(error => {
+    console.error('Erro na requisição GraphQL:', error);
+  });
