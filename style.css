@@ -8,9 +8,10 @@ body {
     justify-content: space-around;
     flex-direction: row;
     outline: none;
+    flex-wrap: wrap;
 }
 
-h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
+h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button, table, th, td {
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
@@ -35,6 +36,8 @@ h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
   width: 40vw;
   padding: 36px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 #container-filtros h1 {
@@ -130,7 +133,8 @@ h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
     cursor: not-allowed;
 }
 
-#container-filtros .container-botoes button#btnHistorico:disabled::after {
+#container-filtros .container-botoes button#btnHistorico:disabled::after,
+#container-filtros .container-botoes button#btnRotas:disabled::after {
     content: "(verifique os filtros)";
     display: block;
     color: whitesmoke;
@@ -142,8 +146,9 @@ h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
 }
 
 #container-filtros #statusSpan {
-    position: absolute;
-    bottom: calc(2.5vh - 5px);
+    margin-top: 24px;
+    width: 100%;
+    text-align: center;
 }
 
 #container-filtros .container-date {
@@ -208,4 +213,35 @@ h1, h2, h3, h4, h5, h6, p, span, legend, label, select, button {
     cursor: pointer;
     font-weight: 700;
     font-size: .7em;
+}
+
+#container-filtros #fieldset-rotas {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+#container-filtros #container-grid {
+    width: 100%;
+    margin-top: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 250px;
+}
+
+#container-filtros #grdRotas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#container-filtros #grdRotas th,
+#container-filtros #grdRotas td {
+    color: whitesmoke;
+    border: 1px solid whitesmoke;
+    border-collapse: collapse;
+    padding: 6px 4px;
+    text-align: center;
+}
+
+#container-filtros #grdRotas th {
+    background-color: #F5F5F540;
 }

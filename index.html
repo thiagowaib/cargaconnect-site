@@ -44,12 +44,13 @@
         <button disabled id="btnHistorico">Visualizar Histórico</button>
         <button id="btnLimpar">↺</button>
       </div>
-    </fieldset>
+    <span id="statusSpan">Modo da Consulta: <b>Geral</b></span>
+  </fieldset>
 
      <!-- 
       CALCULO DE ROTAS
      -->
-     <fieldset>
+     <fieldset id="fieldset-rotas">
       <legend>&nbsp;Rotas&nbsp;</legend>
       <div class="container-cmb">
         <label for="cmbAparelhos2">Aparelhos:&nbsp;</label>
@@ -66,12 +67,24 @@
         </div>
       </div>
       <div class="container-botoes">
-        <button id="btnRotas">Calcular Rotas</button>
+        <button disabled id="btnRotas">Calcular Rotas</button>
         <button id="btnLimparRotas">↺</button>
+      </div>
+      <div id="container-grid">
+        <table id="grdRotas">
+          <tr>
+            <th>Data</th>
+            <th>Distância Percorrida</th>
+          </tr>
+          <tr>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+
+        </table>
       </div>
     </fieldset>
 
-    <span id="statusSpan">Modo da Consulta: <b>Geral</b></span>
     <!-- <button id="atualizar">Atualizar</button> -->
   </div>
 </body>

@@ -9,6 +9,7 @@ const btnDataRotas         = document.getElementById("btnDataRotas");
 const containerDatas       = document.getElementById("container-datas");
 const btnRotas             = document.getElementById("btnRotas");
 const btnLimparRotas       = document.getElementById("btnLimparRotas");
+const grdRotas             = document.getElementById("grdRotas");
 let   routingControl       = null;
 let   datasArray           = [];
 /**
@@ -140,9 +141,12 @@ function habilitaConsultaHistorico() {
   btnConsultaHistorico.disabled = (cmbAparelhos[0].value == "" || inpLimiteHistorico.value.length == 0)
 }
 
+function habilitaConsultaRotas() {
+  btnRotas.disabled = (cmbAparelhos[1].value == "" || datasArray.length <= 0)
+}
+
 function removerData(data) {
-  console.log("REMOVER")
-  if(datasArray.includes(data)) {
+  if(datasArray.includes(data) && inpDataRotas.disabled == false) {
     datasArray = datasArray.filter(d => d != data);
     console.log({datasArray})
     containerDatas.innerHTML = "";
@@ -150,6 +154,7 @@ function removerData(data) {
       containerDatas.innerHTML += `<p id='data-${d}'>${formataData(d)}<span onclick=\"removerData('${v}')\">✖</span></p>`;
     })
   }
+  habilitaConsultaRotas();
 }
 
 function formataData(vData) {
@@ -160,12 +165,35 @@ function formataData(vData) {
     return vData;
 }
 
+function formataDataDB(vData) {
+  v = vData.replace(/\D/gi, "");
+  if(v.length == 8)
+    return v[6]+v[7]+"/"+v[4]+v[5]+"/"+v[0]+v[1]+v[2]+v[3];
+  else
+    return vData;
+}
+
 function formataDataQuery(vData) {
   v = vData.replace(/\D/gi, "");
   if(v.length == 8)
     return v[4]+v[5]+v[6]+v[7]+"-"+v[2]+v[3]+"-"+v[0]+v[1];
   else
     return vData;
+}
+
+function formataDistancia(vDist) {
+  let vDist1 = vDist.toString().split(".")[0]
+  let vDist2 = vDist.toString().split(".")[1]
+  let vDist1F = vDist1;
+
+  vDist1F = "";
+  for(let i=(vDist1.length-1), j = 1; i>=0; i--, j++) {
+    if((j)%3==0 && i!=0) {vDist1F = "."+vDist1[i]+vDist1F}
+    else {vDist1F = vDist1[i] + vDist1F}
+  }
+  
+
+  return vDist1F + "," + vDist2[0] + vDist2[1] + " Km"
 }
 
 /**
@@ -190,6 +218,7 @@ inpDataRotas.oninput = () => {
   }
 }
 cmbAparelhos[0].oninput = () => {habilitaConsultaHistorico();}
+cmbAparelhos[1].oninput = () => {habilitaConsultaRotas();}
 btnConsultaHistorico.onclick = () => {consultaHistorico();}
 btnLimpar.onclick = () => { 
   cmbAparelhos[0].value = "";
@@ -203,7 +232,19 @@ btnDataRotas.onclick = () => {
   if(v.length == 8 && !datasArray.includes(v)) {
     datasArray.push(v);
     containerDatas.innerHTML += `<p id='data-${v}'>${formataData(v)}<span onclick=\"removerData('${v}')\">✖</span></p>`;
+    inpDataRotas.value = "";
   }
+  habilitaConsultaRotas();
+}
+btnLimparRotas.onclick = () => {
+  cmbAparelhos[1].value = "";
+  datasArray = [];
+  containerDatas.innerHTML = "";
+  inpDataRotas.value = "";
+  grdRotas.innerHTML = "<tr><th>Data</th><th>Distância Percorrida</th></tr><tr><td>-</td><td>-</td></tr>";
+  inpDataRotas.disabled = false;
+  cmbAparelhos[1].disabled = false;
+  habilitaConsultaRotas();
 }
 
 // Chama a função para buscar os dados e adicionar marcadores assim que o mapa estiver pronto
@@ -236,19 +277,23 @@ socket.on('novaLocalizacao', (local) => {
 // Realiza a requisição GraphQL
 btnRotas.onclick = () => {
 
-  let datas = datasArray.map(d => {return '"'+formataDataQuery(d)+'"'})
+  let datas = []
+  datas = datasArray.map(d => {return '"'+formataDataQuery(d)+'"'})
+  let aparelhoid = cmbAparelhos[1].value;
+
+  if(datas.length <= 0 || aparelhoid.trim().length <= 0) { return; }
 
   // Define a query GraphQL
-const query = `
-query {
-  consultarDistancias(aparelhoId: "16b265f3-4c94-4a04-aad5-fff65707f958", datas: [${datas}]) {
-    ID
-    DISTANCIA
-    APARELHO_ID
-    DATA
+  const query = `
+  query {
+    consultarDistancias(aparelhoId: "${aparelhoid}", datas: [${datas}]) {
+      ID
+      DISTANCIA
+      APARELHO_ID
+      DATA
+    }
   }
-}
-`;
+  `;
 // Define as opções da requisição
   fetch('http://localhost:4000/graphql', {
     method: 'POST',
@@ -259,7 +304,19 @@ query {
   })
   .then(response => response.json())
   .then(data => {
-    console.log('Resposta da API GraphQL:', data);
+
+    grdRotas.innerHTML = "<tr><th>Data</th><th>Distância Percorrida</th></tr>";
+    if(data && data.data && data.data.consultarDistancias && data.data.consultarDistancias.length > 0) {
+      data.data.consultarDistancias.forEach(obj => {
+        console.log(obj)
+        grdRotas.innerHTML += `<tr><td>${formataDataDB(obj.DATA)}</td><td>${formataDistancia(obj.DISTANCIA)}</td></tr>`;
+      });
+      inpDataRotas.disabled = true;
+      cmbAparelhos[1].disabled = true;
+    } else {
+      grdRotas.innerHTML += "<tr><td>-</td><td>-</td></tr>";
+    }
+    
   })
   .catch(error => {
     console.error('Erro na requisição GraphQL:', error);
