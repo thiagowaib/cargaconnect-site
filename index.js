@@ -2,10 +2,15 @@ const map = L.map('map').setView([-22.220341, -49.9482], 10); // Latitude e long
 const inpLimiteHistorico   = document.getElementById("inpLimiteHistorico");
 const btnConsultaHistorico = document.getElementById("btnHistorico");
 const btnLimpar            = document.getElementById("btnLimpar");
-const cmbAparelhos         = document.getElementById("cmbAparelhos");
+const cmbAparelhos         = [document.getElementById("cmbAparelhos1"), document.getElementById("cmbAparelhos2")];
 const spanStatus           = document.getElementById("statusSpan");
+const inpDataRotas         = document.getElementById("inpDataRotas");
+const btnDataRotas         = document.getElementById("btnDataRotas");
+const containerDatas       = document.getElementById("container-datas");
+const btnRotas             = document.getElementById("btnRotas");
+const btnLimparRotas       = document.getElementById("btnLimparRotas");
 let   routingControl       = null;
-
+let   datasArray           = [];
 /**
  * Configuração do mapa
  */
@@ -53,7 +58,8 @@ async function fetchAparelhos() {
       options += ` <option value="${aparelho.ID}">${aparelho.DESCRICAO}</option>`
     });
 
-    cmbAparelhos.innerHTML = options;
+    cmbAparelhos[0].innerHTML = options;
+    cmbAparelhos[1].innerHTML = options;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -65,7 +71,7 @@ async function fetchAparelhos() {
  */
  async function consultaHistorico() {
   try {
-    const response     = await fetch(`http://localhost:3000/consulta/historico/${cmbAparelhos.value}&${inpLimiteHistorico.value}`);
+    const response     = await fetch(`http://localhost:3000/consulta/historico/${cmbAparelhos[0].value}&${inpLimiteHistorico.value}`);
     const localizacoes = await response.json();
 
     clearMap();
@@ -131,7 +137,35 @@ function preFetchServerData() {
  * Verifica se é possível habilitar o botão de consulta de histórico
  */
 function habilitaConsultaHistorico() {
-  btnConsultaHistorico.disabled = (cmbAparelhos.value == "" || inpLimiteHistorico.value.length == 0)
+  btnConsultaHistorico.disabled = (cmbAparelhos[0].value == "" || inpLimiteHistorico.value.length == 0)
+}
+
+function removerData(data) {
+  console.log("REMOVER")
+  if(datasArray.includes(data)) {
+    datasArray = datasArray.filter(d => d != data);
+    console.log({datasArray})
+    containerDatas.innerHTML = "";
+    datasArray.forEach(d => {
+      containerDatas.innerHTML += `<p id='data-${d}'>${formataData(d)}<span onclick=\"removerData('${v}')\">✖</span></p>`;
+    })
+  }
+}
+
+function formataData(vData) {
+  v = vData.replace(/\D/gi, "");
+  if(v.length == 8)
+    return v[0]+v[1]+"/"+v[2]+v[3]+"/"+v[4]+v[5]+v[6]+v[7];
+  else
+    return vData;
+}
+
+function formataDataQuery(vData) {
+  v = vData.replace(/\D/gi, "");
+  if(v.length == 8)
+    return v[4]+v[5]+v[6]+v[7]+"-"+v[2]+v[3]+"-"+v[0]+v[1];
+  else
+    return vData;
 }
 
 /**
@@ -146,14 +180,30 @@ inpLimiteHistorico.oninput = () => {
   inpLimiteHistorico.value = v;
   habilitaConsultaHistorico();
 }
-cmbAparelhos.oninput = () => {habilitaConsultaHistorico();}
+inpDataRotas.oninput = () => {
+  let v = inpDataRotas.value.replace(/\D/gi, "");
+  if(v.length >= 8) {
+    let va = formataData(v);
+    inpDataRotas.value = va;
+  } else {
+    inpDataRotas.value = v;
+  }
+}
+cmbAparelhos[0].oninput = () => {habilitaConsultaHistorico();}
 btnConsultaHistorico.onclick = () => {consultaHistorico();}
 btnLimpar.onclick = () => { 
-  cmbAparelhos.value = "";
+  cmbAparelhos[0].value = "";
   inpLimiteHistorico.value = "";
   clearMap();
   habilitaConsultaHistorico();
   fetchAndAddMarkers();
+}
+btnDataRotas.onclick = () => {
+  let v = inpDataRotas.value.replace(/\D/gi, "");
+  if(v.length == 8 && !datasArray.includes(v)) {
+    datasArray.push(v);
+    containerDatas.innerHTML += `<p id='data-${v}'>${formataData(v)}<span onclick=\"removerData('${v}')\">✖</span></p>`;
+  }
 }
 
 // Chama a função para buscar os dados e adicionar marcadores assim que o mapa estiver pronto
@@ -183,31 +233,30 @@ socket.on('novaLocalizacao', (local) => {
 });
 
 
-// Define a URL do endpoint GraphQL
-const graphqlEndpoint = 'http://localhost:4000/graphql'; // Substitua pelo seu endpoint GraphQL
-// Define a query GraphQL
-const query = `
-  query {
-    consultarDistancias(APARELHO_ID: "16b265f3-4c94-4a04-aad5-fff65707f958", DATA: "2024-05-23") {
-      ID
-      DISTANCIA
-      APARELHO_ID
-      DATA
-    }
-  }
-`;
-
-// Define as opções da requisição
-const options = {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ query }),
-};
-
 // Realiza a requisição GraphQL
-fetch(graphqlEndpoint, options)
+btnRotas.onclick = () => {
+
+  let datas = datasArray.map(d => {return '"'+formataDataQuery(d)+'"'})
+
+  // Define a query GraphQL
+const query = `
+query {
+  consultarDistancias(aparelhoId: "16b265f3-4c94-4a04-aad5-fff65707f958", datas: [${datas}]) {
+    ID
+    DISTANCIA
+    APARELHO_ID
+    DATA
+  }
+}
+`;
+// Define as opções da requisição
+  fetch('http://localhost:4000/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query }),
+  })
   .then(response => response.json())
   .then(data => {
     console.log('Resposta da API GraphQL:', data);
@@ -215,3 +264,4 @@ fetch(graphqlEndpoint, options)
   .catch(error => {
     console.error('Erro na requisição GraphQL:', error);
   });
+}

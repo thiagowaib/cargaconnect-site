@@ -30,8 +30,8 @@
     <fieldset>
       <legend>&nbsp;Filtros&nbsp;</legend>
       <div class="container-cmb">
-        <label for="cmbAparelhos">Aparelhos:&nbsp;</label>
-        <select name="cmbAparelhos" id="cmbAparelhos">
+        <label for="cmbAparelhos1">Aparelhos:&nbsp;</label>
+        <select name="cmbAparelhos1" id="cmbAparelhos1">
           <option value=""></option>
         </select>
       </div>
@@ -43,6 +43,31 @@
       <div class="container-botoes">
         <button disabled id="btnHistorico">Visualizar Histórico</button>
         <button id="btnLimpar">↺</button>
+      </div>
+    </fieldset>
+
+     <!-- 
+      CALCULO DE ROTAS
+     -->
+     <fieldset>
+      <legend>&nbsp;Rotas&nbsp;</legend>
+      <div class="container-cmb">
+        <label for="cmbAparelhos2">Aparelhos:&nbsp;</label>
+        <select name="cmbAparelhos2" id="cmbAparelhos2">
+          <option value=""></option>
+        </select>
+      </div>
+      <div class="container-date">
+        <div id="container-date-picker">
+          <input id="inpDataRotas" type="inpDataRotas" type="date" placeholder="dd/mm/yyyy" maxlength="10">
+          <button id="btnDataRotas">+</button>
+        </div>
+        <div id="container-datas">
+        </div>
+      </div>
+      <div class="container-botoes">
+        <button id="btnRotas">Calcular Rotas</button>
+        <button id="btnLimparRotas">↺</button>
       </div>
     </fieldset>
 
